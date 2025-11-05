@@ -36,7 +36,7 @@
             shellHook = ''
               export PGDATA=$PWD/.postgres
               export PGPORT=5432
-	      export PGHOST=/tmp
+              export PGHOST=/tmp
               if [ ! -d "$PGDATA" ]; then
                 echo "Initializing PostgreSQL database..."
                 initdb -D $PGDATA
