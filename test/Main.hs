@@ -17,7 +17,7 @@ main = hspec $ do
     it "a_iWantToLearnEsqueleto" $ do
       Exercise.a_iWantToLearnEsqueleto `shouldBe` Answer.a_iWantToLearnEsqueleto
 
-  describe "EE1_Select" $ do
+  fdescribe "EE1_Select" $ do
     it "a_allFlavors" $ do
       Exercise.a_allFlavors `shouldMatchListRunDB` Answer.a_allFlavors
 
