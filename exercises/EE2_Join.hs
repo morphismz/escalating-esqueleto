@@ -1,6 +1,7 @@
 {- HLINT ignore "Use camelCase" -}
 module EE2_Join where
 
+import Control.Arrow
 import Data.Coerce (coerce)
 import Data.Text (Text)
 import Database.Esqueleto.Experimental
@@ -13,8 +14,15 @@ What are all our customers' favorite flavors?
 If they don't have one, give back a `Nothing`.
 -}
 a_favoriteFlavors :: DB [(Entity Customer, Maybe (Entity Flavor))]
-a_favoriteFlavors = _
-
+a_favoriteFlavors = do
+  custflavors <- select $ do
+    (customer :& mflavor) <-
+      from $ table @Customer
+        `leftJoin` table @Flavor
+         `on` \(customer :& mflavor) ->
+          (customer ^. CustomerFavoriteFlavor) ==. (mflavor ?. FlavorId)
+    pure (customer, mflavor)
+  pure custflavors
 {-
 We'd like to determine the popularity of each flavor.
 
@@ -30,7 +38,7 @@ Sample results:
 ]
 -}
 b_flavorPopularity :: DB [(Text, Int)]
-b_flavorPopularity = _
+b_flavorPopularity = undefined
 
 {-
 We have a concept of "groups" provided by CustomerLink and CustomerGroupParent.
@@ -38,10 +46,10 @@ We have a concept of "groups" provided by CustomerLink and CustomerGroupParent.
 Who are all the customers in the largest group?
 -}
 c_largestGroup :: DB [Entity Customer]
-c_largestGroup = _
+c_largestGroup = undefined
 
 {-
 For each CustomerGroupParent, list its ID as well as the IDs of all the customers in that group.
 -}
 d_customerGroups :: DB [(CustomerGroupParentId, [CustomerId])]
-d_customerGroups  = _
+d_customerGroups  = undefined
