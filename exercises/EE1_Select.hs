@@ -1,4 +1,5 @@
 {- HLINT ignore "Use camelCase" -}
+-- {-# LANGUAGE ScopedTypeVariables #-}
 module EE1_Select where
 
 import Data.Coerce (coerce)
@@ -25,7 +26,8 @@ to see if there's any difference
 -}
 a_allFlavors :: DB [Entity Flavor]
 a_allFlavors = do
-  _
+  select $
+    from $ table @Flavor
 
 {-
 Actually I just want the flavor name values. That would be:
@@ -35,7 +37,9 @@ Ensure you do this flavor->name projection in SQL, not after the fact in Haskell
 -}
 b_allFlavorNameValues :: DB [Value Text]
 b_allFlavorNameValues = do
-  _
+  select $ do
+    flavor <- from $ table @Flavor
+    pure $ flavor ^. FlavorName
 
 {-
 Both queries above return lists of wrapped types. 'Entity' comes from persistent,
@@ -46,7 +50,7 @@ plain '[Text]'? Start by copying the previous query.
 -}
 c_allFlavorNames :: DB [Text]
 c_allFlavorNames = do
-  _
+  fmap (fmap unValue) $ b_allFlavorNameValues
 
 {-
 Let's introduce WHERE clauses.
@@ -54,7 +58,10 @@ A vegan just walked in. Provide all our dairy-free flavors.
 -}
 d_dairyFreeFlavors :: DB [Entity Flavor]
 d_dairyFreeFlavors = do
-  _
+  select $ do
+    flavor <- from $ table @Flavor
+    where_ (flavor ^. FlavorDairyFree)
+    pure flavor
 
 {-
 It's often convenient to look up FlavorIds from flavor names. For example:
@@ -65,7 +72,11 @@ Write a query that can take an argument of a list of flavor names, and get their
 -}
 e_flavorIdsFromNames :: [Text] -> DB [FlavorId]
 e_flavorIdsFromNames flavorNames = do
-  _
+  flavors <- select $ do
+    flavor <- from $ table @Flavor
+    where_ $ (flavor ^. FlavorName) `in_` (valList flavorNames)
+    pure (flavor ^. FlavorId)
+  pure $ fmap unValue flavors
 
 {-
 We'd like to run a mildly nefarious targeted ad campaign. What are the emails
@@ -74,6 +85,11 @@ provided a favorite flavor?
 
 Fill in the type as well.
 -}
-f_customersWithoutBirthdaysWithFlavors :: _
+f_customersWithoutBirthdaysWithFlavors :: DB [Email]
 f_customersWithoutBirthdaysWithFlavors = do
-  _
+  emails <- select $ do
+    customer <- from $ table @Customer
+    where_ $ isNothing (customer ^. CustomerBirthday)
+    where_ $ not_ $ isNothing (customer ^. CustomerFavoriteFlavor)            
+    pure (customer ^. CustomerEmail)
+  pure $ fmap unValue emails
