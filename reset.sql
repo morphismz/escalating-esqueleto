@@ -1396,6 +1396,7 @@ DROP TABLE IF EXISTS customer_group_parents CASCADE;
 
 CREATE TABLE customer_group_parents
   ( id UUID PRIMARY KEY UNIQUE DEFAULT uuid_generate_v1mc()
+  , name TEXT NOT NULL
   , created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
   , updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
   );
@@ -1423,7 +1424,7 @@ CREATE TRIGGER customer_links_update BEFORE UPDATE ON customer_links FOR EACH RO
 GRANT SELECT, UPDATE, INSERT, DELETE ON customer_links to escalatingesqueleto;
 
 
-WITH parent AS (INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc()) RETURNING id)
+WITH parent AS (INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'Flavor Savers') RETURNING id)
 INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='daniel208@thompson.me')),
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='patrick365@vasquez.net')),
@@ -1431,7 +1432,7 @@ INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='william667@harris.org')),
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='grace957@ivers.com'));
 
-WITH parent AS (INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc()) RETURNING id)
+WITH parent AS (INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'Tuesday Treaters') RETURNING id)
 INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='daniel208@thompson.me')),
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='benjamin641@quinn.net')),
@@ -1439,28 +1440,28 @@ INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='xena989@robinson.net'));
 
 -- single-person groups
-WITH parent AS (INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc()) RETURNING id)
+WITH parent AS (INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'Felix''s Group') RETURNING id)
 INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='felix845@young.me'));
 
-WITH parent AS (INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc()) RETURNING id)
+WITH parent AS (INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'Xena''s Group') RETURNING id)
 INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='xena989@robinson.net'));
 
 -- empty groups
-INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc());
-INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc());
-INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc());
-INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc());
+INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'Ice Cream Haters');
+INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), '1-star Reviewers');
+INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'New Group');
+INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'New Group (1) (How do I delete these???)');
 
 -- daniel group
-WITH parent AS (INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc()) RETURNING id)
+WITH parent AS (INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'Daniel Squad') RETURNING id)
 INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='daniel208@thompson.me')),
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='daniel720@lewis.org')),
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='daniel825@anderson.net'));
 
-WITH parent AS (INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc()) RETURNING id)
+WITH parent AS (INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'Monday Munchers') RETURNING id)
 INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='isabella525@carter.net')),
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='xena744@harris.net')),
@@ -1471,7 +1472,7 @@ INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='chloe263@young.net'));
 
 -- big group
-WITH parent AS (INSERT INTO customer_group_parents (id) VALUES (uuid_generate_v1mc()) RETURNING id)
+WITH parent AS (INSERT INTO customer_group_parents (id, name) VALUES (uuid_generate_v1mc(), 'Party People') RETURNING id)
 INSERT INTO customer_links VALUES
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='isabella525@carter.net')),
   (uuid_generate_v1mc(), (SELECT id FROM parent), (SELECT id FROM customers WHERE email='xena744@harris.net')),
