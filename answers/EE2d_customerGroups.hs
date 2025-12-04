@@ -9,7 +9,7 @@ import Data.Text (Text)
 import Schema
 import Types
 
-d_customerGroups :: DB [(Text, [Email])]
+d_customerGroups :: DB [(Text, [Text])]
 d_customerGroups = do
   fmap coerce $ select $ do
     (customer :& _ :& customerGroupParent) <- from $
@@ -19,4 +19,4 @@ d_customerGroups = do
         `innerJoin` table @CustomerGroupParent
           `on` (\(_ :& customerLink :& customerGroupParent) -> customerLink.parentId ==. customerGroupParent.id)
     groupBy customerGroupParent.id
-    pure (customerGroupParent.name, maybeArray $ arrayAgg customer.email)
+    pure (customerGroupParent.name, maybeArray $ arrayAgg customer.name)

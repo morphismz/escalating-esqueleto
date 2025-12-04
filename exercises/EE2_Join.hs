@@ -42,7 +42,7 @@ c_largestGroup = _
 
 {-
 For each CustomerGroupParent with at least one customer in it, list its name,
-as well as the emails of all the customers in that group.
+as well as the names of all the customers in that group.
 -}
-d_customerGroups :: DB [(Text, [Email])]
+d_customerGroups :: DB [(Text, [Text])]
 d_customerGroups  = _
