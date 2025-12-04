@@ -31,12 +31,13 @@ Purchase sql=purchases !allColumnsImmutableByDefault
 -- Allows connecting customers together via a CustomerLink
 CustomerGroupParent sql=customer_group_parents
   Id UUID default=uuid_generate_v1mc()
+  name Text
   createdAt UTCTime MigrationOnly
   updatedAt UTCTime MigrationOnly
   deriving Eq Show
 
 -- Connects customers to the groups they're a part of
--- CustomerGroupParent is one-to-many with Customer via CustomerLink
+-- CustomerGroupParent is many-to-many with Customer via CustomerLink
 CustomerLink sql=customer_links
   Id UUID default=uuid_generate_v1mc()
   parentId CustomerGroupParentId OnDeleteCascade
