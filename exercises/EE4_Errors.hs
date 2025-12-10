@@ -1,5 +1,4 @@
 {- HLINT ignore "Use camelCase" -}
-{-# OPTIONS_GHC -fdefer-type-errors #-}
 
 module EE4_Errors where
 
@@ -23,14 +22,15 @@ a_getChocolate :: DB (Maybe (Entity Flavor))
 a_getChocolate = do
   selectOne $ do
     flavor <- from $ table @Flavor
-    where_ $ flavor.name == "Chunky Chocolate"
+    where_ $ flavor.name ==. val "Chunky Chocolate"
     pure flavor
 
 b_flavorNames :: DB [Text]
 b_flavorNames = do
-  select $ do
+  flavors <- select $ do
     flavor <- from $ table @Flavor
-    pure $ unValue flavor.name
+    pure $ flavor.name
+  pure $ fmap unValue flavors
 
 -- also check out the error message in this version of the last exercise:
 -- b2_flavorNames :: DB [Text]
@@ -41,17 +41,18 @@ b_flavorNames = do
 
 c_flavorNameValues :: DB [Value Text]
 c_flavorNameValues = do
-  flavors <- select $ from $ table @Flavor
-  pure $ map (\f -> f.name) flavors
+  select $ do
+    flavor <- from $ table @Flavor
+    pure flavor.name
 
 d_mostPopularFlavor :: DB (Maybe FlavorId)
 d_mostPopularFlavor = do
-  selectOne $ do
+  fmap (fmap unValue) $ selectOne $ do
     (_customer :& flavor) <- from $
       table @Customer `innerJoin` table @Flavor
-      `on` (\(customer :& flavor) -> customer.favoriteFlavor ==. flavor.id)
+      `on` (\(customer :& flavor) -> customer.favoriteFlavor ==. just flavor.id)
     groupBy flavor.id
-    orderBy [desc countRows]
+    orderBy [desc (countRows @Int)]
     pure flavor.id
 
 e_customerPurchases :: DB [(CustomerId, Dollar)]
